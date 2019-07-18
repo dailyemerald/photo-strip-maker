@@ -266,7 +266,7 @@
 
             history.pushState(null, null, newUrl);
             var urlArray = window.location.href.split('photo-strip/');
-            var urlToSend = urlArray[0]+'photo-strip/editorsPage.html'+urlArray[1];
+            var urlToSend = urlArray[0]+'photo-strip-maker/editorsPage.html'+urlArray[1];
             console.log(urlToSend);
             document.getElementById("curUrl").value = urlToSend;
             textFit(document.getElementById('headerText'), {multiLine: true, alignVert: true,maxFontSize: 35});
