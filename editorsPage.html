@@ -1,0 +1,377 @@
+<!-- sample URL: file:///Users/shoheietzel/Documents/EMG/PhotostripProject/photostripVersion2.html?hd=hello&ft=goodbye&bg=000000&fc=F5FF69 -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Photo-Strip Maker Editors Page</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <script src="jscolor.js"></script>
+    <script type="text/javascript" src="html2canvas.js"></script>
+    <script src="https://cdn.rawgit.com/icons8/titanic/master/dist/js/titanic.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/4.5.9/bodymovin.min.js"></script>
+    <script src="textFit.js"></script>
+    <style>
+        .user-form {
+            padding:20px;
+        }
+        .user-form .field {
+            padding: 4px; background: #eee;
+        }
+        .user-form .field label {
+            display:inline-block; width:45%;
+        }
+        .user-form .field input {
+            display:inline-block; width:45%;
+        }
+        .user-form hr {
+            margin: 0px 0 0px 0;
+            background-color: #FFFFFF;
+            height: 1px;
+            border: 0;
+        }
+        .user-form textarea {
+            width: 100%;
+            height: 150px;
+        }
+        .finSub {
+            color:#000000;
+            position: relative;
+            padding: .3em 1em;
+            border: 2px solid;
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+            background-color: transparent;
+            background-position: center;
+            background-size: cover;
+            font-size: 20px;
+            font-weight: 500;
+            line-height: 1.7em!important;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+            display: inline-block;
+            margin: 1rem;
+            position: relative;
+        }
+        .finSub:hover {
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        }
+        .hover_area {
+          position: relative;
+          margin:0,0,0,0;
+          padding:0,0,0,0;
+        }
+
+        .image {
+          display: block;
+          width: 100%;
+          height: auto;
+        }
+
+        .overlay {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 100%;
+          width: 100%;
+          opacity: 0;
+          transition: .2s ease;
+          background-color: #ffffff;
+        }
+
+        .hover_area:hover .overlay {
+          opacity: 0.5;
+        }
+
+        ul {
+            width: 50%;
+            min-width: 10em;
+            font-size: 1em;
+            list-style:none;
+        }
+
+        ul li {
+            display: none;
+            padding: 0.2em;
+            border: 1px solid #ccc;
+        }
+
+        ul li.selected,
+        ul:hover li {
+            display: list-item;
+        }
+
+        li:hover {
+            background-color: #f90;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Script -->
+    <script type='text/javascript'>
+
+        var titanic = new Titanic({
+          hover: false, // auto animated on hover (default true)
+          click: false  // auto animated on click/tap (default false)
+        });
+
+        //titanic.items[0] = titanic;
+        //titanic.items[1] = titanic;
+        //titanic.items[2] = titanic;
+        //titanic.items[3] = titanic;
+        //titanic.items[4] = titanic;
+        //titanic.items[5] = titanic;
+
+        function screenshot(){
+           html2canvas(document.getElementById('preview')).then(function(canvas) {
+            //document.body.appendChild(canvas);
+            var a = document.createElement('a');
+            a.href = canvas.toDataURL("image/jpeg").replace("image/jpeg", "image/octet-stream");
+            var picture = canvas.toDataURL("image/jpeg").replace("image/jpeg", "image/octet-stream");
+            a.download = 'photo-strip-preview.jpg';
+            a.click();
+           });
+        }
+
+        function sleep(ms) {
+          return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function getRandomInt(max) {
+          return Math.floor(Math.random() * Math.floor(max));
+        }
+        function sleep(ms) {
+          return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function getURL() {
+            //initiate loading gifs
+            var cur_pic;
+            for (let i = 1;i <= 6;i++){
+                titanic.items[i-1].off();
+                cur_pic = document.getElementById("testPic"+String(i));
+                cur_pic.setAttribute("src",'loading5.gif');
+            }
+
+            var sizes = ['1080x1920','1440x2560','2016x3584','2088x3712','2160x3840','2304x4096']
+            var urls = [];
+            var xhrs = [];
+            var bool = false;
+            var cur_xhr;
+
+            async function getRequest(i) {
+                var start = new Date();
+                var myUrl = 'https://source.unsplash.com/'+sizes[i%6]+'/?' + document.getElementById("keyword").value;
+                var myUrlString = 'url(' + 'https://source.unsplash.com/'+sizes[i%6]+'/?' + document.getElementById("keyword").value + ')';
+
+                let promise = await new Promise(function(resolve,reject){
+                    xhrs[i] = new XMLHttpRequest();
+                    xhrs[i].open('GET', myUrl + '?sig='+ String(getRandomInt(1000)), true);
+                    xhrs[i].onload = function () {
+                        var regex = /photo-(.*?)?ixlib/;
+                        var m = regex.exec(String(xhrs[i].responseURL));
+                        //console.log(m[1]);
+                        /*if (urls.includes(m[1],0) == false){
+                            urls.push(m[1]);
+                            //console.log('Pushed xhrs'+String(i));
+                            $("#testPic"+String(i)).attr("src",String(xhrs[i].responseURL));
+                            resolve("Success for " + i);
+                        } else {reject("Error for " + i);}*/
+                        $("#testPic"+String(i)).attr("src",String(xhrs[i].responseURL));
+                        resolve("Success for " + i);
+                    };
+                    xhrs[i].send(null);
+                });
+                var finish = new Date();
+                var difference = new Date();
+                difference.setTime(finish.getTime() - start.getTime());
+                console.log( difference.getMilliseconds() );
+                return promise;
+            }
+
+            /*function sequential(i) {
+                getRequest(i).then(function(good){
+                    console.log(good);
+                    if (i <= 8) {sequential(i+1);}
+                },function(bad){
+                    console.log(bad);
+                    if (i <= 9) {sequential(i);}
+                });
+            }*/
+            //sequential(1);
+            for (let i = 1; i <= 6; i++){getRequest(i);}
+            console.log("Done.")
+            return false;
+        }
+
+        function changeSettings() {
+            var preview = document.getElementById("preview");
+            var headerText = document.getElementById("headerText");
+            var footerText = document.getElementById("footerText");
+            var bgColor = document.getElementById("bgColor").value;
+            var headerFontColor = document.getElementById("headerFontColor").value;
+            var footerFontColor = document.getElementById("footerFontColor").value;
+
+
+            preview.style.backgroundColor = '#' + bgColor;
+            var bgUrl = preview.style.backgroundImage;
+            var headerVal = document.getElementById("headerValue").value;
+            document.getElementById("headerText").innerHTML = headerVal;
+            var footerVal = document.getElementById("footerValue").value;
+            document.getElementById("footerText").innerHTML = footerVal;
+
+            headerText.style.color = '#' + headerFontColor;
+            footerText.style.color = '#' + footerFontColor;
+
+            console.log(bgUrl);
+            var sliced1 = bgUrl.substring(5);
+            var sliced2 = sliced1.substring(0,sliced1.indexOf('")'));
+            console.log(sliced2);
+
+            newUrl = "?" + "hd=" + headerVal + "&ft=" + footerVal + "&bg=" + bgColor + "&hfc=" + headerFontColor + "&ffc=" + footerFontColor + "&img=" + sliced2;
+
+            //var hd = getUrlVars()["hd"];
+            //var ft = getUrlVars()["ft"];
+            //var bg = getUrlVars()["bg"];
+            //var fc = getUrlVars()["fc"];
+
+
+            history.pushState(null, null, newUrl);
+            document.getElementById("curUrl").value = window.location.href;
+            textFit(document.getElementById('headerText'), {multiLine: true, alignVert: true,maxFontSize: 40});
+            textFit(document.getElementById('footerText'), {multiLine: true, alignVert: true,maxFontSize: 40});
+
+          return false;
+        }
+
+        function getUrlVars() {
+            var vars = {};
+            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+                vars[key] = value;
+            });
+            return vars;
+        }
+
+        /*
+        function resetSettings() {
+            preview.style.backgroundColor = '#000000';
+            document.getElementById("headerText").innerHTML = "Header Text";
+            document.getElementById("footerText").innerHTML = "Footer Text";
+
+            headerText.style.color = '#FFFFFF';
+            footerText.style.color = '#FFFFFF';
+
+          return false;
+        }
+        */
+
+        function setPic(num) {
+            var img = document.getElementById("testPic"+String(num)).src;
+            var preview = document.getElementById("preview");
+
+            if (titanic.items[num-1]["state"] == 1) {   //item is already on; turn it off and set background to HEX color
+                titanic.items[num-1].off();
+                preview.setAttribute("style","background-image: url('');width:200px;height:600px;border:1px solid black;text-align: center; background-color: #000000;background-position: center;background-size: cover;");
+
+            }
+            else {                              //item is off; turn it on and turn all others off
+                titanic.items[num-1].on();
+                for (let i = 1;i <= 6;i++){
+                    if (i != num) {
+                        titanic.items[i-1].off();
+                    }
+                }
+                preview.setAttribute("style","background-image: url('" + img + "');width:200px;height:600px;border:1px solid black;text-align: center; background-color: #000000;background-position: center;background-size: cover;");
+            }
+
+            changeSettings();
+            return;
+        }
+
+        $(document).ready(function () {
+
+                var hd = getUrlVars()["hd"].replace(/%20/g, " ");
+                var ft = getUrlVars()["ft"].replace(/%20/g, " ");
+                var bg = getUrlVars()["bg"];
+                var hfc = getUrlVars()["hfc"];
+                var ffc = getUrlVars()["ffc"];
+                var img = getUrlVars()["img"];
+
+                //$('input[id="footerValue"]').val('Work!');
+
+                document.getElementById("preview").setAttribute("style","background-image: url('" + img + "');width:600px;height:1800px;border:1px solid black;text-align: center; background-color: #000000;background-position: center;background-size: cover;");
+                console.log(document.getElementById("preview").style.backgroundImage);
+               /* document.getElementById("headerValue").value = hd;
+                document.getElementById("footerValue").value = ft;
+                document.getElementById("bgColor").value = bg;
+                document.getElementById("headerFontColor").value = hfc;
+                document.getElementById("footerFontColor").value = ffc;*/
+
+                document.getElementById("headerText").innerHTML = hd;
+                document.getElementById("footerText").innerHTML = ft;
+                //headerText.style.color = '#FFFFFF';
+                //footerText.style.color = '#FFFFFF';
+
+                //document.getElementById("curUrl").value = window.location.href;
+                //document.getElementById("curUrlTest").innerHTML = window.location.href;
+
+                textFit(document.getElementById('headerText'), {multiLine: true, alignVert: true,maxFontSize: 120});
+                textFit(document.getElementById('footerText'), {multiLine: true, alignVert: true,maxFontSize: 120});
+
+                //document.getElementById("fontForm").style.display="none";
+
+
+                return;
+
+            });
+    </script>
+
+<center>
+    <div style="background-color:#FFFFFF">
+        <h2 style="color:#2d4113">Photostrip Editor Page</h1>
+                <hr style="width:100%; border: 0;height: 3px;background-image: linear-gradient(to right, rgba(140, 199, 64, 0), rgba(140, 199, 64, 1), rgba(140, 199, 64, 0));">
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12" id="previewDiv">
+                <div class="field">
+                        <input type='button' id='but_screenshot' value='Save screenshot' onclick='screenshot();'><br/>
+                </div>
+                <br>
+                <div id="preview" style="width:600px;height:1800px;border:1px solid black;text-align: center; background-color: #000000;background-position: center;">
+                    <div id="headerText" style="width:570px;height:195px;line-height:90px;margin:15px 15px 15px 15px;color:#FFFFFF;font-size:75px;font-size: 5.1vw;">Header Text</div>
+                    <div id="photoArea" style="margin: 0px 60px 0px 60px; background-color: white;width:480px;height:1350px;"></div>
+                    <div id="footerText" style="width:570px;height:195px;line-height:90px;margin:15px 15px 15px 15px;color:#FFFFFF;font-size:75px;font-size: 5.1vw;">Footer Text</div>
+                </div>
+            </div>
+
+                    <!--
+                    <div class="user-form field" style="float: right; background-color: #FFFFFF">
+                        <button onclick="return resetSettings()">Reset</button>
+                    </div>
+                    <a class="finSub" href="https://forms.gle/nFo1bd2GJ3V845UT7">Finish Submitting
+                </a>
+                    -->
+                </form>
+                <br>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+</center>
+
+</body>
+</html>
+
+
+
+
