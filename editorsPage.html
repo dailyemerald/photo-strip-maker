@@ -13,9 +13,18 @@
     <script src="https://cdn.rawgit.com/icons8/titanic/master/dist/js/titanic.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/4.5.9/bodymovin.min.js"></script>
     <script src="textFit.js"></script>
+
+    <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
+    <script src="HiGoogleFonts/js/fonts.js"></script>
+    <link rel="stylesheet" href="HiGoogleFonts/css/fonts.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css">
+
     <style>
         .user-form {
             padding:20px;
+            width:50%;
         }
         .user-form .field {
             padding: 4px; background: #eee;
@@ -297,6 +306,19 @@
 
         $(document).ready(function () {
 
+            $( "#select_fontfamily" ).higooglefonts({
+                selectedCallback:function(e){
+                    console.log(document.getElementById("select_fontfamily").value);
+                },
+                loadedCallback:function(font){
+                    console.log(document.getElementById("select_fontfamily").value);
+                    /*/////// This is where you should apply font.///////
+                    /////////////////////////////////////////////////////*/
+                    $("#headerText").css("font-family", font); // Change the font-family of the #paragraph
+                    $("#footerText").css("font-family", font); // Change the font-family of the #paragraph
+                }
+            });
+
                 var hd = getUrlVars()["hd"].replace(/%20/g, " ");
                 var ft = getUrlVars()["ft"].replace(/%20/g, " ");
                 var bg = getUrlVars()["bg"];
@@ -339,6 +361,20 @@
                 <hr style="width:100%; border: 0;height: 3px;background-image: linear-gradient(to right, rgba(140, 199, 64, 0), rgba(140, 199, 64, 1), rgba(140, 199, 64, 0));">
     </div>
     <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <form class="user-form" method="post" onsubmit="return changeSettings()" style="padding: 0px 20px 0px 20px;">
+                    <div class="field">
+                        <label for="select_fontfamily">Font:</label>
+                        <select id="select_fontfamily" style="width: 45%;"></select>
+                    </div>
+                    <hr>
+                    <div class="field">
+                        <input type="submit" value="Preview" name="Submit">
+                    </div>
+                </form>
+            </div>
+        </div>
         <div class="row">
             <div class="col-sm-12" id="previewDiv">
                 <div class="field">
