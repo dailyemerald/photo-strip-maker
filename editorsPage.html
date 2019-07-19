@@ -98,18 +98,7 @@
           opacity: 0.5;
         }
 
-        ul {
-            width: 50%;
-            min-width: 10em;
-            font-size: 1em;
-            list-style:none;
-        }
 
-        ul li {
-            display: none;
-            padding: 0.2em;
-            border: 1px solid #ccc;
-        }
 
         ul li.selected,
         ul:hover li {
@@ -223,41 +212,9 @@
         }
 
         function changeSettings() {
-            var preview = document.getElementById("preview");
-            var headerText = document.getElementById("headerText");
-            var footerText = document.getElementById("footerText");
-            var bgColor = document.getElementById("bgColor").value;
-            var headerFontColor = document.getElementById("headerFontColor").value;
-            var footerFontColor = document.getElementById("footerFontColor").value;
 
-
-            preview.style.backgroundColor = '#' + bgColor;
-            var bgUrl = preview.style.backgroundImage;
-            var headerVal = document.getElementById("headerValue").value;
-            document.getElementById("headerText").innerHTML = headerVal;
-            var footerVal = document.getElementById("footerValue").value;
-            document.getElementById("footerText").innerHTML = footerVal;
-
-            headerText.style.color = '#' + headerFontColor;
-            footerText.style.color = '#' + footerFontColor;
-
-            console.log(bgUrl);
-            var sliced1 = bgUrl.substring(5);
-            var sliced2 = sliced1.substring(0,sliced1.indexOf('")'));
-            console.log(sliced2);
-
-            newUrl = "?" + "hd=" + headerVal + "&ft=" + footerVal + "&bg=" + bgColor + "&hfc=" + headerFontColor + "&ffc=" + footerFontColor + "&img=" + sliced2;
-
-            //var hd = getUrlVars()["hd"];
-            //var ft = getUrlVars()["ft"];
-            //var bg = getUrlVars()["bg"];
-            //var fc = getUrlVars()["fc"];
-
-
-            history.pushState(null, null, newUrl);
-            document.getElementById("curUrl").value = window.location.href;
-            textFit(document.getElementById('headerText'), {multiLine: true, alignVert: true,maxFontSize: 40});
-            textFit(document.getElementById('footerText'), {multiLine: true, alignVert: true,maxFontSize: 40});
+            textFit(document.getElementById('headerText'), {multiLine: true, alignVert: true,maxFontSize: 120});
+            textFit(document.getElementById('footerText'), {multiLine: true, alignVert: true,maxFontSize: 120});
 
           return false;
         }
@@ -321,8 +278,17 @@
                 }
             });
 
+                if (typeof getUrlVars()["hd"] != 'undefined') {
                 var hd = getUrlVars()["hd"].replace(/%20/g, " ");
-                var ft = getUrlVars()["ft"].replace(/%20/g, " ");
+                } else {
+                    var hd = "Header Text";
+                }
+
+                if (typeof getUrlVars()["ft"] != 'undefined') {
+                    var ft = getUrlVars()["ft"].replace(/%20/g, " ");
+                } else {
+                    var ft = "Footer Text";
+                }
                 var bg = getUrlVars()["bg"];
                 var hfc = getUrlVars()["hfc"];
                 var ffc = getUrlVars()["ffc"];
@@ -349,7 +315,8 @@
                 textFit(document.getElementById('headerText'), {multiLine: true, alignVert: true,maxFontSize: 120});
                 textFit(document.getElementById('footerText'), {multiLine: true, alignVert: true,maxFontSize: 120});
 
-                //document.getElementById("fontForm").style.display="none";
+                console.log(getUrlVars()["ff"]);
+                document.getElementById('fontDisplay').innerHTML = "Font Used: " + getUrlVars()["ff"];
 
 
                 return;
@@ -363,6 +330,11 @@
                 <hr style="width:100%; border: 0;height: 3px;background-image: linear-gradient(to right, rgba(140, 199, 64, 0), rgba(140, 199, 64, 1), rgba(140, 199, 64, 0));">
     </div>
     <div class="container">
+        <div class="row">
+            <div class="col-sm-12" id="fontDisplay">
+
+            </div>
+        </div>
         <div class="row">
             <div class="col-sm-12">
                 <form class="user-form" method="post" onsubmit="return changeSettings()" style="padding: 0px 20px 0px 20px;">
