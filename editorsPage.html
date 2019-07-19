@@ -139,15 +139,13 @@
         //titanic.items[5] = titanic;
 
         function screenshot(){
-            html2canvas(
-                document.getElementById('preview'),
-                {allowTaint: true, logging: true}
-            ).then(function(canvas) {
+            html2canvas(document.getElementById('preview'),
+            {allowTaint: false}).then(function(canvas) {
             //document.body.appendChild(canvas);
             var a = document.createElement('a');
             a.href = canvas.toDataURL("image/jpeg").replace("image/jpeg", "image/octet-stream");
             var picture = canvas.toDataURL("image/jpeg").replace("image/jpeg", "image/octet-stream");
-            picture.allowTaint = True;
+            picture.crossOrigin="anonymous";
             a.download = 'photo-strip-preview.jpg';
             a.click();
            });
