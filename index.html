@@ -6,6 +6,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!--My Stylesheet-->
+    <link rel="stylesheet" type="text/css" href="stylesheet.css">
+
+
     <!--Bootstrap styleshets and scripts-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -35,77 +39,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
     <script src="HiGoogleFonts/js/fonts.js"></script>
     <link rel="stylesheet" href="HiGoogleFonts/css/fonts.css">
-
-
-
-    <style>
-        .user-form {
-            padding:20px;
-        }
-        .user-form .field {
-            padding: 4px; background: #eee;
-        }
-        .user-form .field label {
-            display:inline-block; width:45%;
-        }
-        .user-form .field input {
-            display:inline-block; width:45%;
-        }
-        .user-form hr {
-            margin: 0px 0 0px 0;
-            background-color: #FFFFFF;
-            height: 1px;
-            border: 0;
-        }
-        .user-form textarea {
-            width: 100%;
-            height: 150px;
-        }
-
-        .hover_area {
-          position: relative;
-          margin:0,0,0,0;
-          padding:0,0,0,0;
-        }
-
-        .image {
-          display: block;
-          width: 100%;
-          height: auto;
-        }
-
-        .overlay {
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          height: 100%;
-          width: 100%;
-          opacity: 0;
-          transition: .2s ease;
-          background-color: #ffffff;
-        }
-
-        .hover_area:hover .overlay {
-          opacity: 0.5;
-        }
-
-        ul li.selected,
-        ul:hover li {
-            display: list-item;
-        }
-
-        li:hover {
-            background-color: #f90;
-        }
-
-        .instructions {
-            color:#757575;
-            text-align: left;
-        }
-
-    </style>
 </head>
 <body>
     <!-- ################################################## -->
@@ -406,14 +339,14 @@
 
     <center>
         <!-- Title -->
-        <div style="background-color:#FFFFFF">
-            <h2 style="color:#2d4113;">EMG Photostrip Maker</h1>
-                    <hr style="width:100%; border: 0;height: 3px;background-image: linear-gradient(to right, rgba(140, 199, 64, 0), rgba(140, 199, 64, 1), rgba(140, 199, 64, 0));">
+        <div>
+            <h2>EMG Photostrip Maker</h1>
+                    <hr class="titleUnderline">
         </div>
         <div class="container">
             <div class="row">
                 <!-- Column 1: Instructions -->
-                <div class="col-sm-4" id="instructions">
+                <div class="col-sm-4">
                     <h2>Instructions</h2>
                     <p class="instructions">
                        <i><b> - To save your photostrip at any point, click "Preview" and copy the URL.</b> </i>
@@ -424,11 +357,11 @@
                     <p class="instructions">
                        Select either solid or image (can be changed anytime).
                     </p>
-                    <h5 style="text-align: left;">Solid Backgrounds</h5>
+                    <h5>Solid Backgrounds</h5>
                     <p class="instructions">
                        <b>1.</b> Click the box next to "Background Color" and choose a color.
                     </p>
-                    <h5 style="text-align: left;">Image Backgrounds</h5>
+                    <h5>Image Backgrounds</h5>
                     <p class="instructions">
                        <b>1.</b> Type in search terms (e.g. blue ocean) in the box next to "Search a keyword" and click "View Images Below". <br>
                        <b>2.</b> Six associated images will appear at the bottom. Click on any one to preview the image. <br>
@@ -448,26 +381,26 @@
                 </div>
                 <!-- Column 2: Photostrip preview -->
                 <div class="col-sm-4" id="previewDiv">
-                    <div id="preview" style="width:200px;height:600px;border:1px solid black;text-align: center; background-color: #000000;background-position: center;">
-                        <div id="headerText" style="width:190px;height:65px;line-height:30px;margin:5px 5px 5px 5px;color:#FFFFFF;font-size:25px;font-size: 1.7vw;">Header Text</div>
-                        <div id="photoArea" style="margin: 0px 20px 0px 20px; background-color: white;width:160px;height:450px;"></div>
-                        <div id="footerText" style="width:190px;height:65px;line-height:30px;margin:5px 5px 5px 5px;color:#FFFFFF;font-size:25px;font-size: 1.7vw;">Footer Text</div>
+                    <div id="preview">
+                        <div id="headerText">Header Text</div>
+                        <div id="photoArea"></div>
+                        <div id="footerText">Footer Text</div>
                     </div>
                 </div>
                 <!-- Column 3: Settings and Submission Form -->
                 <div class="col-sm-4">
                     <h3>Background Settings</h3>
-                    <form class="user-form" name="radioForm" style="padding: 0px 20px 0px 20px;">
+                    <form class="user-form" name="radioForm">
                         <div class="field">
-                            <label for="solidRadio" style="display:inline-block; width:75%;">Solid Background:</label>
-                            <input type="radio" name="backgroundradios" id="solidRadio" style="display:inline-block; width:15%;" value="1" checked="checked">
+                            <label for="solidRadio" id="solidLabel" style="display:inline-block; width:75%;">Solid Background:</label>
+                            <input type="radio" name="backgroundradios" id="solidRadio" value="1" checked="checked">
                         </div>
                         <div class="field">
-                            <label for="imageRadio" style="display:inline-block; width:75%;">Image Background:</label>
-                            <input type="radio" name="backgroundradios" id="imageRadio" style="display:inline-block; width:15%;" value="2">
+                            <label for="imageRadio" id="imageLabel">Image Background:</label>
+                            <input type="radio" name="backgroundradios" id="imageRadio" value="2">
                         </div>
                     </form>
-                    <form id="imgForm" class="user-form" method="post" onsubmit="return getURL()" style="display:none;padding: 0px 20px 0px 20px;">
+                    <form id="imgForm" class="user-form" method="post" onsubmit="return getURL()">
                         <div class="field">
                             <label for="keyword">Search a keyword:</label>
                             <input type="text" name="keyword" id="keyword" size="10" autofocus value="">
@@ -477,7 +410,7 @@
                             <input type="submit" id="primaryButton" value="View Images Below" name="Submit">
                         </div>
                     </form>
-                    <form class="user-form" method="post" onsubmit="return changeSettings()" style="padding: 0px 20px 0px 20px;">
+                    <form class="user-form" method="post" onsubmit="return changeSettings()">
                         <div class="field" id="backgroundForm">
                             <label for="bgColor">Background Color:</label>
                             <input name="bgColor" id="bgColor" class="jscolor" size="10" autofocus value="000000">
@@ -506,7 +439,7 @@
                         <hr>
                         <div class="field">
                             <label for="select_fontfamily">Font:</label>
-                            <select id="select_fontfamily" style="width: 45%;"></select>
+                            <select id="select_fontfamily"></select>
                         </div>
                         <hr>
                         <div class="field">
@@ -515,7 +448,7 @@
                     </form>
                     <h3>Ready to Send?</h3>
                     <!--Change email in action URL to desired location for client photostrip preview-->
-                    <form class="user-form" style="padding: 0px 20px 0px 20px;" action="https://formspree.io/shoheietzel@gmail.com"
+                    <form class="user-form" action="https://formspree.io/shoheietzel@gmail.com"
                         method="POST">
                         <input type="hidden" id="curUrl" name="curUrl" value="">
                         <div class="field">
@@ -529,8 +462,8 @@
                         </div>
                         <hr>
                         <div class="field">
-                            <label for="subject">Comments</label>
-                            <textarea id="subject" name="subject" placeholder="Anything Else?" style="height:70px"></textarea>
+                            <label for="comments">Comments</label>
+                            <textarea id="comments" name="comments" placeholder="Anything Else?"></textarea>
                         </div>
                         <hr>
                         <div class="field">
@@ -541,54 +474,53 @@
                 </div>
             </div>
             <!-- Bottom Section: Image search results -->
-            <hr style="height:2px; border:none; color:#000; background-color:#000;">
+            <hr class="bottomDivider">
             <div class="row">
                 <div class="col-sm-12">
                     <input type="button"
                         value="View More Images"
                         id="secondaryButton"
-                        onclick="document.getElementById('primaryButton').click()"
-                        style="display:none;" />
+                        onclick="document.getElementById('primaryButton').click()" />
                 </div>
             </div>
             <br>
             <div class="row">
-                <div class="col-sm-2">
+                <div class="col-sm-2 col-xs-6">
                     <div class='hover_area' onclick="setPic(1)">
-                        <img id="testPic1" src="" width="100%" style="vertical-align: middle;" class="loading image"/>
+                        <img id="testPic1" src="" width="100%"/>
                         <div class="overlay titanic titanic-checkbox"></div>
                     </div>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-2 col-xs-6">
                     <div class='hover_area' onclick="setPic(2)">
-                        <img id="testPic2" src="" width="100%" style="vertical-align: middle;" class="loading image"/>
+                        <img id="testPic2" src="" width="100%"/>
                         <div class="overlay titanic titanic-checkbox"></div>
                     </div>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-2 col-xs-6">
                     <div class='hover_area' onclick="setPic(3)">
-                        <img id="testPic3" src="" width="100%" style="vertical-align: middle;" class="loading image"/>
+                        <img id="testPic3" src="" width="100%"/>
                         <div class="overlay titanic titanic-checkbox">
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-2 col-xs-6">
                     <div class='hover_area' onclick="setPic(4)">
-                        <img id="testPic4" src="" width="100%" style="vertical-align: middle;" class="loading image"/>
+                        <img id="testPic4" src="" width="100%"/>
                         <div class="overlay titanic titanic-checkbox">
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-2 col-xs-6">
                     <div class='hover_area' onclick="setPic(5)">
-                        <img id="testPic5" src="" width="100%" style="vertical-align: middle;" class="loading image"/>
+                        <img id="testPic5" src="" width="100%"/>
                         <div class="overlay titanic titanic-checkbox">
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-2 col-xs-6">
                     <div class='hover_area' onclick="setPic(6)">
-                        <img id="testPic6" src="" width="100%" style="vertical-align: middle;" class="loading image"/>
+                        <img id="testPic6" src="" width="100%"/>
                         <div class="overlay titanic titanic-checkbox">
                         </div>
                     </div>
