@@ -5,21 +5,37 @@
     <title>Photo-Strip Maker</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Bootstrap styleshets and scripts-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+    <!--http://jscolor.com/ - used for text color pickers-->
     <script src="jscolor.js"></script>
+
+    <!--https://html2canvas.hertzen.com/ - used for getting screenshots-->
     <script type="text/javascript" src="html2canvas.js"></script>
+
+    <!--https://github.com/icons8/titanic - used for animated icons-->
     <script src="https://cdn.rawgit.com/icons8/titanic/master/dist/js/titanic.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/4.5.9/bodymovin.min.js"></script>
+
+    <!--https://github.com/STRML/textFit - used for fitting header and footer texts-->
     <script src="textFit.js"></script>
 
+    <!--JavaScript library -->
     <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+
+    <!--Select2 - jQuery replacement for select boxes-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css">
+
+    <!--https://developers.google.com/fonts/docs/webfont_loader - used for loading Google Fonts-->
     <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.5.18/webfont.js"></script>
     <script src="HiGoogleFonts/js/fonts.js"></script>
     <link rel="stylesheet" href="HiGoogleFonts/css/fonts.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/css/select2.min.css">
+
 
 
     <style>
@@ -45,30 +61,7 @@
             width: 100%;
             height: 150px;
         }
-        .finSub {
-            color:#000000;
-            position: relative;
-            padding: .3em 1em;
-            border: 2px solid;
-            -webkit-border-radius: 3px;
-            -moz-border-radius: 3px;
-            border-radius: 3px;
-            background-color: transparent;
-            background-position: center;
-            background-size: cover;
-            font-size: 20px;
-            font-weight: 500;
-            line-height: 1.7em!important;
-            cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-            transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-            display: inline-block;
-            margin: 1rem;
-            position: relative;
-        }
-        .finSub:hover {
-            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-        }
+
         .hover_area {
           position: relative;
           margin:0,0,0,0;
@@ -98,19 +91,6 @@
           opacity: 0.5;
         }
 
-        ul {
-            /*width: 50%;
-            min-width: 10em;
-            font-size: 1em;
-            list-style:none;*/
-        }
-
-        ul li {
-            /*display: none;
-            padding: 0.2em;
-            border: 1px solid #ccc;*/
-        }
-
         ul li.selected,
         ul:hover li {
             display: list-item;
@@ -128,104 +108,81 @@
     </style>
 </head>
 <body>
-    <!-- Script -->
+    <!-- ################################################## -->
+    <!-- ################ BEGIN JAVASCRIPT ################ -->
+    <!-- ################################################## -->
     <script type='text/javascript'>
 
+        //created titanic object for animated icons that display background image selection
         var titanic = new Titanic({
           hover: false, // auto animated on hover (default true)
           click: false  // auto animated on click/tap (default false)
         });
 
-        //titanic.items[0] = titanic;
-        //titanic.items[1] = titanic;
-        //titanic.items[2] = titanic;
-        //titanic.items[3] = titanic;
-        //titanic.items[4] = titanic;
-        //titanic.items[5] = titanic;
-
-        function screenshot(){
-           html2canvas(document.getElementById('preview')).then(function(canvas) {
-            //document.body.appendChild(canvas);
-            var a = document.createElement('a');
-            a.href = canvas.toDataURL("image/jpeg").replace("image/jpeg", "image/octet-stream");
-            var picture = canvas.toDataURL("image/jpeg").replace("image/jpeg", "image/octet-stream");
-            a.download = 'photo-strip-preview.jpg';
-            a.click();
-           });
-        }
-
-        function sleep(ms) {
-          return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
+        //returns random integer
         function getRandomInt(max) {
           return Math.floor(Math.random() * Math.floor(max));
         }
-        function sleep(ms) {
-          return new Promise(resolve => setTimeout(resolve, ms));
-        }
 
+        //gets 6 images related to search query using Unsplash
         function getURL() {
-            //initiate loading gifs
+            //initiate loading gifs until images are retrieved
             var cur_pic;
             for (let i = 1;i <= 6;i++){
-                titanic.items[i-1].off();
                 cur_pic = document.getElementById("testPic"+String(i));
                 cur_pic.setAttribute("src",'loading5.gif');
+                titanic.items[i-1].off(); //sets overlayed checkbox as unselected
             }
 
+            //possible sizes for background images -- all w/16:9 ratio -- cycled thru diff sizes to best avoid Unsplash returning duplicates
             var sizes = ['1080x1920','1440x2560','2016x3584','2088x3712','2160x3840','2304x4096']
             var urls = [];
-            var xhrs = [];
-            var bool = false;
-            var cur_xhr;
+            var xhrs = []; //store XMLHttpRequest objects, which allows data retrieval w/out refreshing page
+            //var bool = false;
+            //var cur_xhr;
 
+            //retrieve data for images 1 thru 6
+            for (let i = 1; i <= 6; i++){getRequest(i);}
+
+            //function that defines how to use XMLHttpRequests to retrieve images
             async function getRequest(i) {
-                var start = new Date();
-                var myUrl = 'https://source.unsplash.com/'+sizes[i%6]+'/?' + document.getElementById("keyword").value;
-                var myUrlString = 'url(' + 'https://source.unsplash.com/'+sizes[i%6]+'/?' + document.getElementById("keyword").value + ')';
+                //var start = new Date(); //for logging time taken to retrieve image
 
+                //put search URL in format that Unsplash accepts
+                var myUrl = 'https://source.unsplash.com/'+sizes[i%6]+'/?' + document.getElementById("keyword").value;
+                //var myUrlString = 'url(' + 'https://source.unsplash.com/'+sizes[i%6]+'/?' + document.getElementById("keyword").value + ')';
+
+                //promises are hard to explain --> https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-promise-27fc71e77261
+                //not 100% sure if promises are required here, but this was a difficult part of the code that finally worked, so I left it as is
                 let promise = await new Promise(function(resolve,reject){
-                    xhrs[i] = new XMLHttpRequest();
+                    xhrs[i] = new XMLHttpRequest(); //place XMLHttpRequest object in array
                     xhrs[i].open('GET', myUrl + '?sig='+ String(getRandomInt(1000)), true);
                     xhrs[i].onload = function () {
                         var regex = /photo-(.*?)?ixlib/;
                         var m = regex.exec(String(xhrs[i].responseURL));
-                        //console.log(m[1]);
-                        /*if (urls.includes(m[1],0) == false){
-                            urls.push(m[1]);
-                            //console.log('Pushed xhrs'+String(i));
-                            $("#testPic"+String(i)).attr("src",String(xhrs[i].responseURL));
-                            resolve("Success for " + i);
-                        } else {reject("Error for " + i);}*/
                         $("#testPic"+String(i)).attr("src",String(xhrs[i].responseURL));
                         resolve("Success for " + i);
                     };
                     xhrs[i].send(null);
                 });
-                var finish = new Date();
-                var difference = new Date();
-                difference.setTime(finish.getTime() - start.getTime());
-                console.log( difference.getMilliseconds() );
+
+                /* for logging purposes
+                //var finish = new Date();
+                //var difference = new Date();
+                //difference.setTime(finish.getTime() - start.getTime());
+                //console.log( difference.getMilliseconds() ); */
+
                 return promise;
             }
-
-            /*function sequential(i) {
-                getRequest(i).then(function(good){
-                    console.log(good);
-                    if (i <= 8) {sequential(i+1);}
-                },function(bad){
-                    console.log(bad);
-                    if (i <= 9) {sequential(i);}
-                });
-            }*/
-            //sequential(1);
-            for (let i = 1; i <= 6; i++){getRequest(i);}
-            console.log("Done.")
+            document.getElementById("secondaryButton").style.display="block"; //show 'view more images' button at bottom
+            //console.log("Done.")
             return false;
         }
 
+        //called at the end of setPic() to reflect changed settings in the photostrip preview
         function changeSettings() {
+
+            //create local variables for current settings
             var preview = document.getElementById("preview");
             var headerText = document.getElementById("headerText");
             var footerText = document.getElementById("footerText");
@@ -233,48 +190,50 @@
             var headerFontColor = document.getElementById("headerFontColor").value;
             var footerFontColor = document.getElementById("footerFontColor").value;
             var fontFamily = document.getElementById("select_fontfamily").value;
-
-            var bgType = "";
+            var bgUrl = preview.style.backgroundImage;
+            var headerVal = document.getElementById("headerValue").value;
+            var footerVal = document.getElementById("footerValue").value;
+            var bgType = ""; //reflects whether a solid or image background is being used
             if (document.getElementById("solidRadio").checked == true) {
                 bgType = "solid";
             } else {
                 bgType = "image";
             };
 
+            //change attributes of preview with the above local variables
             preview.style.backgroundColor = '#' + bgColor;
-            var bgUrl = preview.style.backgroundImage;
-            var headerVal = document.getElementById("headerValue").value;
             document.getElementById("headerText").innerHTML = headerVal;
-            var footerVal = document.getElementById("footerValue").value;
             document.getElementById("footerText").innerHTML = footerVal;
-
             headerText.style.color = '#' + headerFontColor;
             footerText.style.color = '#' + footerFontColor;
 
-            console.log(bgUrl);
-            var sliced1 = bgUrl.substring(5);
-            var sliced2 = sliced1.substring(0,sliced1.indexOf('")'));
-            console.log(sliced2);
-
-            newUrl = "?" + "ff=" + fontFamily + "&hd=" + headerVal + "&ft=" + footerVal + "&bg=" + bgColor + "&hfc=" + headerFontColor + "&ffc=" + footerFontColor + "&img=" + sliced2 + "&bgtype=" + bgType;
-
-            //var hd = getUrlVars()["hd"];
-            //var ft = getUrlVars()["ft"];
-            //var bg = getUrlVars()["bg"];
-            //var fc = getUrlVars()["fc"];
-
-
-            history.pushState(null, null, newUrl);
-            var urlArray = window.location.href.split('photo-strip-maker/');
-            var urlToSend = urlArray[0]+'photo-strip-maker/editorsPage.html'+urlArray[1];
-            console.log(urlToSend);
-            document.getElementById("curUrl").value = urlToSend;
+            //auto fit the header and footer texts
             textFit(document.getElementById('headerText'), {multiLine: true, alignVert: true,maxFontSize: 35});
             textFit(document.getElementById('footerText'), {multiLine: true, alignVert: true,maxFontSize: 35});
+
+            console.log(bgUrl); //'url("https://unsplash.com/a/URL/example")'
+
+            //remove unneeded text from above string - result is just the URL
+            var sliced1 = bgUrl.substring(5);
+            var sliced2 = sliced1.substring(0,sliced1.indexOf('")'));
+            console.log(sliced2); //'https://unsplash.com/a/URL/example'
+
+            //put together section of URL that stores all of the current settings information
+            newUrl = "?" + "ff=" + fontFamily + "&hd=" + headerVal + "&ft=" + footerVal + "&bg=" + bgColor + "&hfc=" + headerFontColor + "&ffc=" + footerFontColor + "&img=" + sliced2 + "&bgtype=" + bgType;
+
+            //changes browser history to include 'newUrl'
+            history.pushState(null, null, newUrl);
+
+            //get URL to send to EMG staff if user submits the current photostrip
+            var urlArray = window.location.href.split('photo-strip-maker/');
+            var urlToSend = urlArray[0]+'photo-strip-maker/editorsPage.html'+urlArray[1];
+            //console.log(urlToSend);
+            document.getElementById("curUrl").value = urlToSend; //include URL in hidden field of 'Ready to Send?' HTML form
 
           return false;
         }
 
+        //pulls information from URL and places them into a dictionary
         function getUrlVars() {
             var vars = {};
             var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
@@ -283,29 +242,20 @@
             return vars;
         }
 
-        /*
-        function resetSettings() {
-            preview.style.backgroundColor = '#000000';
-            document.getElementById("headerText").innerHTML = "Header Text";
-            document.getElementById("footerText").innerHTML = "Footer Text";
-
-            headerText.style.color = '#FFFFFF';
-            footerText.style.color = '#FFFFFF';
-
-          return false;
-        }
-        */
-
+        //reflects changes in preview regarding to background images
         function setPic(num) {
+            //get selected image from HTML
             var img = document.getElementById("testPic"+String(num)).src;
             var preview = document.getElementById("preview");
 
-            if (titanic.items[num-1]["state"] == 1) {   //item is already on; turn it off and set background to HEX color
+            //clicked image is currently the background; unselect it and change background to solid color
+            if (titanic.items[num-1]["state"] == 1) {
                 titanic.items[num-1].off();
                 preview.setAttribute("style","background-image: url('');width:200px;height:600px;border:1px solid black;text-align: center; background-color: #000000;background-position: center;background-size: cover;");
 
             }
-            else {                              //item is off; turn it on and turn all others off
+            //clicked image is not currently the background; select it and ensure all other images are unselected
+            else {
                 titanic.items[num-1].on();
                 for (let i = 1;i <= 6;i++){
                     if (i != num) {
@@ -315,93 +265,45 @@
                 preview.setAttribute("style","background-image: url('" + img + "');width:200px;height:600px;border:1px solid black;text-align: center; background-color: #000000;background-position: center;background-size: cover;");
             }
 
+            //call changeSettings to reflect any other changes made in the settings
             changeSettings();
             return;
         }
 
+        //function that runs when the page first loads
         $(document).ready(function () {
+            //setting up HiGoogleFonts font selector dropdown menu
+            //following example at https://github.com/saadqbal/HiGoogleFonts/blob/master/index.html
             $( "#select_fontfamily" ).higooglefonts({
                 selectedCallback:function(e){
                     console.log(document.getElementById("select_fontfamily").value);
                 },
                 loadedCallback:function(font){
                     console.log(document.getElementById("select_fontfamily").value);
-                    /*/////// This is where you should apply font.///////
-                    /////////////////////////////////////////////////////*/
-                    $("#headerText").css("font-family", font); // Change the font-family of the #paragraph
-                    $("#footerText").css("font-family", font); // Change the font-family of the #paragraph
+                    $("#headerText").css("font-family", font); // Change the font-family of the headerText
+                    $("#footerText").css("font-family", font); // Change the font-family of the footerText
                 }
             });
 
-
-            if (typeof getUrlVars()["hd"] != 'undefined') {
-                var hd = getUrlVars()["hd"].replace(/%20/g, " ");
-            } else {
-                var hd = "Header Text";
-            }
-
-            if (typeof getUrlVars()["ft"] != 'undefined') {
-                var ft = getUrlVars()["ft"].replace(/%20/g, " ");
-            } else {
-                var ft = "Footer Text";
-            }
-
-            var bg = getUrlVars()["bg"];
-            var hfc = getUrlVars()["hfc"];
-            var ffc = getUrlVars()["ffc"];
-            var img = getUrlVars()["img"];
-            var ff = getUrlVars()["ff"];
-
-            //$("#headerText").css("font-family", ff); // Change the font-family of the #paragraph
-            //$("#footerText").css("font-family", ff); // Change the font-family of the #paragraph
-
-            //$('input[id="footerValue"]').val('Work!');
-
-            document.getElementById("preview").setAttribute("style","background-image: url('" + img + "');width:200px;height:600px;border:1px solid black;text-align: center; background-color: #000000;background-position: center;background-size: cover;");
-            console.log(document.getElementById("preview").style.backgroundImage);
-            document.getElementById("headerValue").value = hd;
-            document.getElementById("footerValue").value = ft;
-            document.getElementById("bgColor").value = bg;
-            document.getElementById("headerFontColor").value = hfc;
-            document.getElementById("footerFontColor").value = ffc;
-
-            document.getElementById("headerText").innerHTML = hd;
-            document.getElementById("footerText").innerHTML = ft;
-
-
-            textFit(document.getElementById('headerText'), {multiLine: true, alignVert: true,maxFontSize: 40});
-            textFit(document.getElementById('footerText'), {multiLine: true, alignVert: true,maxFontSize: 40});
-
-            //document.getElementById("fontForm").style.display="none";
-
-            if (typeof ff != 'undefined') {
-                var ff_stripped = ff.replace(/%20/g, " ");
-            } else {
-                var ff_stripped = "Arial";
-            }
-
-
-            $("#headerText").css("font-family", ff_stripped); // Change the font-family of the #paragraph
-            $("#footerText").css("font-family", ff_stripped);
-            console.log(ff_stripped);
-
+            //radio buttons used to change menu depending on whether background is a solid color or an image
             var rad = document.radioForm.backgroundradios;
-            var prev = null;
+            //add eventListeners to the radios
             for (var i = 0; i < rad.length; i++) {
                 rad[i].addEventListener('change', function() {
                     console.log(this.value);
-                    if (this.value == 1) {  //solidRadio
-                        document.getElementById('backgroundForm').style.display = "block";
-                        document.getElementById('imgForm').style.display = "none";
+                    //solidRadio is clicked; change menu accordingly
+                    if (this.value == 1) {
+                        document.getElementById('backgroundForm').style.display = "block"; //hide image menu option
+                        document.getElementById('imgForm').style.display = "none"; //show solid menu option
                         var img = getUrlVars()["img"];
                         var bg = getUrlVars()["bg"];
                         console.log(bg);
                         document.getElementById("preview").setAttribute("style","background: url('" + img + "');background-repeat: no-repeat;width:200px;height:600px;border:1px solid black;text-align: center; background-color: #" + bg + ";background-position: center;background-size: 0px 0px;");
 
-
-                    } else {                //imageRadio
-                        document.getElementById('backgroundForm').style.display = "none";
-                        document.getElementById('imgForm').style.display = "block";
+                    //imageRadio is clicked; change menu accordingly
+                    } else {
+                        document.getElementById('backgroundForm').style.display = "none"; //show image menu option
+                        document.getElementById('imgForm').style.display = "block"; //hide image menu option
                         var img = getUrlVars()["img"];
                         var bg = getUrlVars()["bg"];
                         document.getElementById("preview").setAttribute("style","background: url('" + img + "');background-repeat: no-repeat;width:200px;height:600px;border:1px solid black;text-align: center;background-color: #" + bg + ";background-position: center;background-size: cover;");
@@ -409,232 +311,295 @@
                 });
             }
 
+            //for all following info taken from URL: if info already defined in URL, get it; otherwise set it to a predefined default
+            //HeaderText
+            if (typeof getUrlVars()["hd"] != 'undefined') {
+                var hd = getUrlVars()["hd"].replace(/%20/g, " ");
+            } else {
+                var hd = "Header Text";
+            }
+            //FooterText
+            if (typeof getUrlVars()["ft"] != 'undefined') {
+                var ft = getUrlVars()["ft"].replace(/%20/g, " ");
+            } else {
+                var ft = "Footer Text";
+            }
+            //Background solid color
+            if (typeof getUrlVars()["bg"] != 'undefined') {
+                var bg = getUrlVars()["bg"];
+            } else {
+                var bg = '000000';
+            }
+            //HeaderText color
+            if (typeof getUrlVars()["hfc"] != 'undefined') {
+                var hfc = getUrlVars()["hfc"];
+            } else {
+                var hfc = 'FFFFFF';
+            }
+            //FooterText color
+            if (typeof getUrlVars()["ffc"] != 'undefined') {
+                var ffc = getUrlVars()["ffc"];
+            } else {
+                var ffc = 'FFFFFF';
+            }
+            //FontFamily
+            if (typeof getUrlVars()["ff"] != 'undefined') {
+                var ff = getUrlVars()["ff"].replace(/%20/g, " ");
+            } else {
+                var ff = "Arial";
+            }
+            //image
+            var img = getUrlVars()["img"];
             var bgType = getUrlVars()["bgtype"];
 
+            //place info from URL into the HTML elements
+            //document.getElementById("preview").setAttribute("style","background-image: url('" + img + "');width:200px;height:600px;border:1px solid black;text-align: center; background-color: #000000;background-position: center;background-size: cover;");
+            document.getElementById("headerText").innerHTML = hd;
+            document.getElementById("footerText").innerHTML = ft;
+            $("#headerText").css("font-family", ff); // Change the font-family of the #paragraph
+            $("#footerText").css("font-family", ff);
+
+            //place info from URL into the HTML form
+            document.getElementById("headerValue").value = hd;
+            document.getElementById("footerValue").value = ft;
+            document.getElementById("bgColor").value = bg;
+            document.getElementById("headerFontColor").value = hfc;
+            document.getElementById("footerFontColor").value = ffc;
+
+            //auto fit the header and footer texts
+            textFit(document.getElementById('headerText'), {multiLine: true, alignVert: true,maxFontSize: 35});
+            textFit(document.getElementById('footerText'), {multiLine: true, alignVert: true,maxFontSize: 35});
+
+
+
+            //handling background type info from URL requires extra effort; radio buttons must be checked/unchecked and previews must be adjusted accordingly
             if (bgType == "image") {
                 $("#imageRadio").prop("checked", true);
                 $("#solidRadio").prop("checked", false);
+
+                //place appropriate style attributes into photostrip preview div
                 document.getElementById("preview").setAttribute("style","background: url('" + img + "');background-repeat: no-repeat;width:200px;height:600px;border:1px solid black;text-align: center;background-color: #" + bg + ";background-position: center;background-size: cover;");
-                document.getElementById('backgroundForm').style.display = "none";
-                document.getElementById('imgForm').style.display = "block";
+                document.getElementById('backgroundForm').style.display = "none"; //hide image menu option
+                document.getElementById('imgForm').style.display = "block"; //show solid menu option
             } else {
                 $("#imageRadio").prop("checked", false);
                 $("#solidRadio").prop("checked", true);
-                document.getElementById("preview").setAttribute("style","background: url('" + img + "');background-repeat: no-repeat;width:200px;height:600px;border:1px solid black;text-align: center; background-color: #" + bg + ";background-position: center;background-size: 0px 0px;");
-                document.getElementById('backgroundForm').style.display = "block";
-                document.getElementById('imgForm').style.display = "none";
-            };
 
+                //place appropriate style attributes into photostrip preview div
+                document.getElementById("preview").setAttribute("style","background: url('" + img + "');background-repeat: no-repeat;width:200px;height:600px;border:1px solid black;text-align: center; background-color: #" + bg + ";background-position: center;background-size: 0px 0px;");
+                document.getElementById('backgroundForm').style.display = "block"; //show image menu option
+                document.getElementById('imgForm').style.display = "none"; //hide solid menu option
+            };
 
             return;
 
         });
     </script>
-
-<center>
-    <div style="background-color:#FFFFFF">
-        <h2 style="color:#2d4113;">EMG Photostrip Maker</h1>
-                <hr style="width:100%; border: 0;height: 3px;background-image: linear-gradient(to right, rgba(140, 199, 64, 0), rgba(140, 199, 64, 1), rgba(140, 199, 64, 0));">
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-4" id="instructions">
-                <h2>Instructions</h2>
-                <p class="instructions">
-                   <i>Important: To save a version of your photostrip at any point, click "Preview" and copy the URL to a safe place.</i>
-                </p>
-                <h4>Background Settings</h4>
-                <p class="instructions">
-                   Select either solid or image (can be changed later).
-                </p>
-                <h5 style="text-align: left;">Solid Backgrounds</h5>
-                <p class="instructions">
-                   <b>1.</b> Click the box next to "Background Color" and choose a color.
-                </p>
-                <h5 style="text-align: left;">Image Backgrounds</h5>
-                <p class="instructions">
-                   <b>1.</b> Type in search terms (e.g. blue ocean) in the box next to "Search a keyword" and click "View Images Below". <br>
-                   <b>2.</b> Six associated images will appear at the bottom. Click on any one to preview the image. <br>
-                   <b>3.</b> To view more pictures, click "View Images Below" again. <br>
-                </p>
-                <h4>Text Settings</h4>
-                <p class="instructions">
-                    <b>1.</b> Text inputs and color pickers are available for Header and Footer labels.<br>
-                    <b>2.</b> Fonts can be selected from the dropdown menu. <i>(Font selection will be reflected immediately, but not autospacing.)</i> <br>
-                    <b>3.</b> Click "preview" to view changes.
-                </p>
-                <h4>Ready to Send?</h4>
-                <p class="instructions">
-                    To send your photostrip to us, fill in your full name and email, add anything else you want us to know, and click send!
-                </p>
-                <p class="instructions">
-
-                </p>
-                <p class="instructions">
-
-                </p>
-                <br>
-            </div>
-            <div class="col-sm-4" id="previewDiv">
-                <div id="preview" style="width:200px;height:600px;border:1px solid black;text-align: center; background-color: #000000;background-position: center;">
-                    <div id="headerText" style="width:190px;height:65px;line-height:30px;margin:5px 5px 5px 5px;color:#FFFFFF;font-size:25px;font-size: 1.7vw;">Header Text</div>
-                    <div id="photoArea" style="margin: 0px 20px 0px 20px; background-color: white;width:160px;height:450px;"></div>
-                    <div id="footerText" style="width:190px;height:65px;line-height:30px;margin:5px 5px 5px 5px;color:#FFFFFF;font-size:25px;font-size: 1.7vw;">Footer Text</div>
-                </div>
-            </div>
-            <div class="col-sm-4" id="googleForm">
-                <h3>Background Settings</h3>
-                <form class="user-form" name="radioForm" style="padding: 0px 20px 0px 20px;">
-                    <div class="field">
-                        <label for="solidRadio" style="display:inline-block; width:75%;">Solid Background:</label>
-                        <input type="radio" name="backgroundradios" id="solidRadio" style="display:inline-block; width:15%;" value="1" checked="checked">
-                    </div>
-                    <div class="field">
-                        <label for="imageRadio" style="display:inline-block; width:75%;">Image Background:</label>
-                        <input type="radio" name="backgroundradios" id="imageRadio" style="display:inline-block; width:15%;" value="2">
-                    </div>
-                </form>
-                <form id="imgForm" class="user-form" method="post" onsubmit="return getURL()" style="display:none;padding: 0px 20px 0px 20px;">
-                    <div class="field">
-                        <label for="keyword">Search a keyword:</label>
-                        <input type="text" name="keyword" id="keyword" size="10" autofocus value="">
-                    </div>
-                    <hr>
-                    <div class="field">
-                        <input type="submit" value="View Images Below" name="Submit">
-                    </div>
-                </form>
-                <form class="user-form" method="post" onsubmit="return changeSettings()" style="padding: 0px 20px 0px 20px;">
-                    <div class="field" id="backgroundForm">
-                        <label for="bgColor">Background Color:</label>
-                        <input name="bgColor" id="bgColor" class="jscolor" size="10" autofocus value="000000">
-                    </div>
-                    <h3>Text Settings</h3>
-                    <hr>
-                    <div class="field">
-                        <label for="headerValue">Header Text:</label>
-                        <input type="text" id="headerValue" value="Header Text">
-                    </div>
-                    <hr>
-                    <div class="field">
-                        <label for="headerFontColor">Header Color:</label>
-                        <input name="headerFontColor" id="headerFontColor" class="jscolor" size="10" autofocus value="FFFFFF">
-                    </div>
-                    <hr>
-                    <div class="field">
-                        <label for="footerValue">Footer Text:</label>
-                        <input type="text" id="footerValue" value="Footer Text">
-                    </div>
-                    <hr>
-                    <div class="field">
-                        <label for="footerFontColor">Footer Color:</label>
-                        <input name="footerFontColor" id="footerFontColor" class="jscolor" size="10" autofocus value="FFFFFF">
-                    </div>
-                    <hr>
-                    <div class="field">
-                        <label for="select_fontfamily">Font:</label>
-                        <select id="select_fontfamily" style="width: 45%;"></select>
-                    </div>
-                    <hr>
-                    <div class="field">
-                        <input type="submit" value="Preview" name="Submit">
-                    </div>
-                </form>
-                <h3>Ready to Send?</h3>
-                <form class="user-form" style="padding: 0px 20px 0px 20px;" action="https://formspree.io/shoheietzel@gmail.com"
-                    method="POST">
-                    <input type="hidden" id="curUrl" name="curUrl" value="">
-                    <div class="field">
-                        <label for="fullName">Full Name:</label>
-                        <input type="text" id="fullName" name="fullName">
-                    </div>
-                    <hr>
-                    <div class="field">
-                        <label for="e-mail">Email:</label>
-                        <input type="email" name="e-mail">
-                    </div>
-                    <hr>
-                    <div class="field">
-                        <label for="subject">Comments</label>
-                        <textarea id="subject" name="subject" placeholder="Anything Else?" style="height:100px"></textarea>
-                    </div>
-                    <hr>
-                    <div class="field">
-                        <input type="submit" value="Send">
-                    </div>
-
-                </form>
-                    <!--
-                    <div class="field">
-                        <input type="submit" value="Preview" name="Submit">
-                        <input type='button' id='but_screenshot' value='Save screenshot' onclick='screenshot();'><br/>
-                    </div>
-
-                    <div class="user-form field" style="float: right; background-color: #FFFFFF">
-                        <button onclick="return resetSettings()">Reset</button>
-                    </div>
-                    <a class="finSub" href="https://forms.gle/nFo1bd2GJ3V845UT7">Finish Submitting
-                </a>
-                    -->
-                </form>
-                <br>
-
-            </div>
-            <script>
+    <!-- ################################################## -->
+    <!-- ################# END JAVASCRIPT ################# -->
+    <!-- ################################################## -->
 
 
-                    </script>
 
+    <!-- ################################################## -->
+    <!-- ################### BEGIN HTML ################### -->
+    <!-- ################################################## -->
+
+    <center>
+        <!-- Title -->
+        <div style="background-color:#FFFFFF">
+            <h2 style="color:#2d4113;">EMG Photostrip Maker</h1>
+                    <hr style="width:100%; border: 0;height: 3px;background-image: linear-gradient(to right, rgba(140, 199, 64, 0), rgba(140, 199, 64, 1), rgba(140, 199, 64, 0));">
         </div>
-
-        <hr style="height:2px; border:none; color:#000; background-color:#000;">
-        <div class="row">
-            <div class="col-sm-2">
-                <div class='hover_area' onclick="setPic(1)">
-                    <img id="testPic1" src="" width="100%" style="vertical-align: middle;" class="loading image"/>
-                    <div class="overlay titanic titanic-checkbox"></div>
+        <div class="container">
+            <div class="row">
+                <!-- Column 1: Instructions -->
+                <div class="col-sm-4" id="instructions">
+                    <h2>Instructions</h2>
+                    <p class="instructions">
+                       <i><b> - To save your photostrip at any point, click "Preview" and copy the URL.</b> </i>
+                       <br>
+                       <i><b> - If trying to view a photostrip from a past URL, click "Preview" for proper viewing.</b></i>
+                    </p>
+                    <h4>Background Settings</h4>
+                    <p class="instructions">
+                       Select either solid or image (can be changed anytime).
+                    </p>
+                    <h5 style="text-align: left;">Solid Backgrounds</h5>
+                    <p class="instructions">
+                       <b>1.</b> Click the box next to "Background Color" and choose a color.
+                    </p>
+                    <h5 style="text-align: left;">Image Backgrounds</h5>
+                    <p class="instructions">
+                       <b>1.</b> Type in search terms (e.g. blue ocean) in the box next to "Search a keyword" and click "View Images Below". <br>
+                       <b>2.</b> Six associated images will appear at the bottom. Click on any one to preview the image. <br>
+                       <b>3.</b> To view more pictures, click "View More Images" again. <br>
+                    </p>
+                    <h4>Text Settings</h4>
+                    <p class="instructions">
+                        <b>1.</b> Text inputs and color pickers are available for Header and Footer labels.<br>
+                        <b>2.</b> Fonts can be selected from the dropdown menu. <i>(Autospacing will occur upon clicking "Preview".)</i> <br>
+                        <b>3.</b> Click "preview" to view changes.
+                    </p>
+                    <h4>Ready to Send?</h4>
+                    <p class="instructions">
+                        To send your photostrip to us, fill in your full name and email, add anything else you want us to know about your design, and click send!
+                    </p>
+                    <br>
                 </div>
-            </div>
-            <div class="col-sm-2">
-                <div class='hover_area' onclick="setPic(2)">
-                    <img id="testPic2" src="" width="100%" style="vertical-align: middle;" class="loading image"/>
-                    <div class="overlay titanic titanic-checkbox"></div>
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <div class='hover_area' onclick="setPic(3)">
-                    <img id="testPic3" src="" width="100%" style="vertical-align: middle;" class="loading image"/>
-                    <div class="overlay titanic titanic-checkbox">
+                <!-- Column 2: Photostrip preview -->
+                <div class="col-sm-4" id="previewDiv">
+                    <div id="preview" style="width:200px;height:600px;border:1px solid black;text-align: center; background-color: #000000;background-position: center;">
+                        <div id="headerText" style="width:190px;height:65px;line-height:30px;margin:5px 5px 5px 5px;color:#FFFFFF;font-size:25px;font-size: 1.7vw;">Header Text</div>
+                        <div id="photoArea" style="margin: 0px 20px 0px 20px; background-color: white;width:160px;height:450px;"></div>
+                        <div id="footerText" style="width:190px;height:65px;line-height:30px;margin:5px 5px 5px 5px;color:#FFFFFF;font-size:25px;font-size: 1.7vw;">Footer Text</div>
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-2">
-                <div class='hover_area' onclick="setPic(4)">
-                    <img id="testPic4" src="" width="100%" style="vertical-align: middle;" class="loading image"/>
-                    <div class="overlay titanic titanic-checkbox">
-                    </div>
+                <!-- Column 3: Settings and Submission Form -->
+                <div class="col-sm-4">
+                    <h3>Background Settings</h3>
+                    <form class="user-form" name="radioForm" style="padding: 0px 20px 0px 20px;">
+                        <div class="field">
+                            <label for="solidRadio" style="display:inline-block; width:75%;">Solid Background:</label>
+                            <input type="radio" name="backgroundradios" id="solidRadio" style="display:inline-block; width:15%;" value="1" checked="checked">
+                        </div>
+                        <div class="field">
+                            <label for="imageRadio" style="display:inline-block; width:75%;">Image Background:</label>
+                            <input type="radio" name="backgroundradios" id="imageRadio" style="display:inline-block; width:15%;" value="2">
+                        </div>
+                    </form>
+                    <form id="imgForm" class="user-form" method="post" onsubmit="return getURL()" style="display:none;padding: 0px 20px 0px 20px;">
+                        <div class="field">
+                            <label for="keyword">Search a keyword:</label>
+                            <input type="text" name="keyword" id="keyword" size="10" autofocus value="">
+                        </div>
+                        <hr>
+                        <div class="field">
+                            <input type="submit" id="primaryButton" value="View Images Below" name="Submit">
+                        </div>
+                    </form>
+                    <form class="user-form" method="post" onsubmit="return changeSettings()" style="padding: 0px 20px 0px 20px;">
+                        <div class="field" id="backgroundForm">
+                            <label for="bgColor">Background Color:</label>
+                            <input name="bgColor" id="bgColor" class="jscolor" size="10" autofocus value="000000">
+                        </div>
+                        <h3>Text Settings</h3>
+                        <hr>
+                        <div class="field">
+                            <label for="headerValue">Header Text:</label>
+                            <input type="text" id="headerValue" value="Header Text">
+                        </div>
+                        <hr>
+                        <div class="field">
+                            <label for="headerFontColor">Header Color:</label>
+                            <input name="headerFontColor" id="headerFontColor" class="jscolor" size="10" autofocus value="FFFFFF">
+                        </div>
+                        <hr>
+                        <div class="field">
+                            <label for="footerValue">Footer Text:</label>
+                            <input type="text" id="footerValue" value="Footer Text">
+                        </div>
+                        <hr>
+                        <div class="field">
+                            <label for="footerFontColor">Footer Color:</label>
+                            <input name="footerFontColor" id="footerFontColor" class="jscolor" size="10" autofocus value="FFFFFF">
+                        </div>
+                        <hr>
+                        <div class="field">
+                            <label for="select_fontfamily">Font:</label>
+                            <select id="select_fontfamily" style="width: 45%;"></select>
+                        </div>
+                        <hr>
+                        <div class="field">
+                            <input type="submit" value="Preview" name="Submit">
+                        </div>
+                    </form>
+                    <h3>Ready to Send?</h3>
+                    <form class="user-form" style="padding: 0px 20px 0px 20px;" action="https://formspree.io/shoheietzel@gmail.com"
+                        method="POST">
+                        <input type="hidden" id="curUrl" name="curUrl" value="">
+                        <div class="field">
+                            <label for="fullName">Full Name:</label>
+                            <input type="text" id="fullName" name="fullName">
+                        </div>
+                        <hr>
+                        <div class="field">
+                            <label for="e-mail">Email:</label>
+                            <input type="email" name="e-mail">
+                        </div>
+                        <hr>
+                        <div class="field">
+                            <label for="subject">Comments</label>
+                            <textarea id="subject" name="subject" placeholder="Anything Else?" style="height:70px"></textarea>
+                        </div>
+                        <hr>
+                        <div class="field">
+                            <input type="submit" value="Send">
+                        </div>
+                    </form>
+                    <br>
                 </div>
             </div>
-            <div class="col-sm-2">
-                <div class='hover_area' onclick="setPic(5)">
-                    <img id="testPic5" src="" width="100%" style="vertical-align: middle;" class="loading image"/>
-                    <div class="overlay titanic titanic-checkbox">
-                    </div>
+            <!-- Bottom Section: Image search results -->
+            <hr style="height:2px; border:none; color:#000; background-color:#000;">
+            <div class="row">
+                <div class="col-sm-12">
+                    <input type="button"
+                        value="View More Images"
+                        id="secondaryButton"
+                        onclick="document.getElementById('primaryButton').click()"
+                        style="display:none;" />
                 </div>
             </div>
-            <div class="col-sm-2">
-                <div class='hover_area' onclick="setPic(6)">
-                    <img id="testPic6" src="" width="100%" style="vertical-align: middle;" class="loading image"/>
-                    <div class="overlay titanic titanic-checkbox">
+            <br>
+            <div class="row">
+                <div class="col-sm-2">
+                    <div class='hover_area' onclick="setPic(1)">
+                        <img id="testPic1" src="" width="100%" style="vertical-align: middle;" class="loading image"/>
+                        <div class="overlay titanic titanic-checkbox"></div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class='hover_area' onclick="setPic(2)">
+                        <img id="testPic2" src="" width="100%" style="vertical-align: middle;" class="loading image"/>
+                        <div class="overlay titanic titanic-checkbox"></div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class='hover_area' onclick="setPic(3)">
+                        <img id="testPic3" src="" width="100%" style="vertical-align: middle;" class="loading image"/>
+                        <div class="overlay titanic titanic-checkbox">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class='hover_area' onclick="setPic(4)">
+                        <img id="testPic4" src="" width="100%" style="vertical-align: middle;" class="loading image"/>
+                        <div class="overlay titanic titanic-checkbox">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class='hover_area' onclick="setPic(5)">
+                        <img id="testPic5" src="" width="100%" style="vertical-align: middle;" class="loading image"/>
+                        <div class="overlay titanic titanic-checkbox">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class='hover_area' onclick="setPic(6)">
+                        <img id="testPic6" src="" width="100%" style="vertical-align: middle;" class="loading image"/>
+                        <div class="overlay titanic titanic-checkbox">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <hr style="height:2px; border:none; color:#000; background-color:#000;">
     </div>
-</div>
-
 </center>
+    <!-- ################################################## -->
+    <!-- #################### END HTML #################### -->
+    <!-- ################################################## -->
 
 </body>
 </html>
