@@ -353,7 +353,6 @@
             var bgType = getUrlVars()["bgtype"];
 
             //place info from URL into the HTML elements
-            //document.getElementById("preview").setAttribute("style","background-image: url('" + img + "');width:200px;height:600px;border:1px solid black;text-align: center; background-color: #000000;background-position: center;background-size: cover;");
             document.getElementById("headerText").innerHTML = hd;
             document.getElementById("footerText").innerHTML = ft;
             $("#headerText").css("font-family", ff); // Change the font-family of the #paragraph
@@ -515,6 +514,7 @@
                         </div>
                     </form>
                     <h3>Ready to Send?</h3>
+                    <!--Change email in action URL to desired location for client photostrip preview-->
                     <form class="user-form" style="padding: 0px 20px 0px 20px;" action="https://formspree.io/shoheietzel@gmail.com"
                         method="POST">
                         <input type="hidden" id="curUrl" name="curUrl" value="">

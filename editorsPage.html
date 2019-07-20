@@ -341,61 +341,56 @@
             });
     </script>
 
-<center>
-    <div style="background-color:#FFFFFF">
-        <h2 style="color:#2d4113">Photostrip Editor Page</h1>
-                <hr style="width:100%; border: 0;height: 3px;background-image: linear-gradient(to right, rgba(140, 199, 64, 0), rgba(140, 199, 64, 1), rgba(140, 199, 64, 0));">
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12" id="fontDisplay">
+    <center>
+        <!-- Title -->
+        <div style="background-color:#FFFFFF">
+            <h2 style="color:#2d4113">Photostrip Editor Page</h2>
+            <hr style="width:100%; border: 0;height: 3px;background-image: linear-gradient(to right, rgba(140, 199, 64, 0), rgba(140, 199, 64, 1), rgba(140, 199, 64, 0));">
+        </div>
+        <div class="container">
+            <!-- Font Used -->
+            <div class="row">
+                <div class="col-sm-12" id="fontDisplay">
 
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12">
-                <form class="user-form" method="post" onsubmit="return changeSettings()" style="padding: 0px 20px 0px 20px;">
-                    <div class="field">
-                        <label for="select_fontfamily">Font:</label>
-                        <select id="select_fontfamily" style="width: 45%;"></select>
-                    </div>
-                    <hr>
-                    <div class="field">
-                        <input type="submit" value="Preview" name="Submit">
-                    </div>
-                </form>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-12" id="previewDiv">
-                <div class="field">
-                        <input type='button' id='but_screenshot' value='Save screenshot' onclick='screenshot();'><br/>
-                </div>
-                <br>
-                <div id="preview" style="width:600px;height:1800px;border:1px solid black;text-align: center; background-color: #000000;background-position: center;">
-                    <div id="headerText" style="width:570px;height:195px;line-height:90px;margin:15px 15px 15px 15px;color:#FFFFFF;font-size:75px;font-size: 5.1vw;">Header Text</div>
-                    <div id="photoArea" style="margin: 0px 60px 0px 60px; background-color: white;width:480px;height:1350px;"></div>
-                    <div id="footerText" style="width:570px;height:195px;line-height:90px;margin:15px 15px 15px 15px;color:#FFFFFF;font-size:75px;font-size: 5.1vw;">Footer Text</div>
                 </div>
             </div>
-
-                    <!--
-                    <div class="user-form field" style="float: right; background-color: #FFFFFF">
-                        <button onclick="return resetSettings()">Reset</button>
+            <!-- Menu, Preview Button -->
+            <div class="row">
+                <div class="col-sm-12">
+                    <form class="user-form" method="post" onsubmit="return changeSettings()" style="padding: 0px 20px 0px 20px;">
+                        <div class="field">
+                            <label for="select_fontfamily">Font:</label>
+                            <select id="select_fontfamily" style="width: 45%;"></select>
+                        </div>
+                        <hr>
+                        <div class="field">
+                            <input type="submit" value="Preview" name="Submit">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- Photostrip Preview -->
+            <div class="row">
+                <div class="col-sm-12" id="previewDiv">
+                    <div class="field">
+                        <input type='button' id='but_screenshot' value='Save screenshot' onclick='screenshot();'>
+                        <br/>
                     </div>
-                    <a class="finSub" href="https://forms.gle/nFo1bd2GJ3V845UT7">Finish Submitting
-                </a>
-                    -->
-                </form>
+                    <br>
+                    <div id="preview" style="width:600px;height:1800px;border:1px solid black;text-align: center; background-color: #000000;background-position: center;">
+                        <div id="headerText" style="width:570px;height:195px;line-height:90px;margin:15px 15px 15px 15px;color:#FFFFFF;font-size:75px;font-size: 5.1vw;">
+                            Header Text
+                        </div>
+                        <div id="photoArea" style="margin: 0px 60px 0px 60px; background-color: white;width:480px;height:1350px;"></div>
+                        <div id="footerText" style="width:570px;height:195px;line-height:90px;margin:15px 15px 15px 15px;color:#FFFFFF;font-size:75px;font-size: 5.1vw;">
+                            Footer Text
+                        </div>
+                    </div>
+                </div>
                 <br>
-
             </div>
         </div>
-    </div>
-</div>
-
-</center>
-
+    </center>
 </body>
 </html>
 
