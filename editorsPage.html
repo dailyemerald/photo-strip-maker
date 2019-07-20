@@ -264,63 +264,79 @@
         }
 
         $(document).ready(function () {
-
+            //setting up HiGoogleFonts font selector dropdown menu
+            //following example at https://github.com/saadqbal/HiGoogleFonts/blob/master/index.html
             $( "#select_fontfamily" ).higooglefonts({
                 selectedCallback:function(e){
                     console.log(document.getElementById("select_fontfamily").value);
                 },
                 loadedCallback:function(font){
                     console.log(document.getElementById("select_fontfamily").value);
-                    /*/////// This is where you should apply font.///////
-                    /////////////////////////////////////////////////////*/
-                    $("#headerText").css("font-family", font); // Change the font-family of the #paragraph
-                    $("#footerText").css("font-family", font); // Change the font-family of the #paragraph
+                    $("#headerText").css("font-family", font); // Change the font-family of the headerText
+                    $("#footerText").css("font-family", font); // Change the font-family of the footerText
                 }
             });
-
+                //for all following info taken from URL: if info already defined in URL, get it; otherwise set it to a predefined default
+                //HeaderText
                 if (typeof getUrlVars()["hd"] != 'undefined') {
                 var hd = getUrlVars()["hd"].replace(/%20/g, " ");
                 } else {
                     var hd = "Header Text";
                 }
-
+                //FooterText
                 if (typeof getUrlVars()["ft"] != 'undefined') {
                     var ft = getUrlVars()["ft"].replace(/%20/g, " ");
                 } else {
                     var ft = "Footer Text";
                 }
-                var bg = getUrlVars()["bg"];
-                var hfc = getUrlVars()["hfc"];
-                var ffc = getUrlVars()["ffc"];
+                //Background solid color
+                if (typeof getUrlVars()["bg"] != 'undefined') {
+                    var bg = getUrlVars()["bg"];
+                } else {
+                    var bg = '000000';
+                }
+                //HeaderText color
+                if (typeof getUrlVars()["hfc"] != 'undefined') {
+                    var hfc = getUrlVars()["hfc"];
+                } else {
+                    var hfc = 'FFFFFF';
+                }
+                //FooterText color
+                if (typeof getUrlVars()["ffc"] != 'undefined') {
+                    var ffc = getUrlVars()["ffc"];
+                } else {
+                    var ffc = 'FFFFFF';
+                }
+                //FontFamily
+                if (typeof getUrlVars()["ff"] != 'undefined') {
+                    var ff = getUrlVars()["ff"].replace(/%20/g, " ");
+                } else {
+                    var ff = "Arial";
+                }
+                //FontFamily
+                if (typeof getUrlVars()["ff"] != 'undefined') {
+                    var ff = getUrlVars()["ff"].replace(/%20/g, " ");
+                } else {
+                    var ff = "";
+                }
+                //Display used font for EMG staff to confirm
+                document.getElementById('fontDisplay').innerHTML = "Font Used: " + ff;
+                //image
                 var img = getUrlVars()["img"];
 
-                //$('input[id="footerValue"]').val('Work!');
-
-                document.getElementById("preview").setAttribute("style","background-image: url('" + img + "');width:600px;height:1800px;border:1px solid black;text-align: center; background-color: #000000;background-position: center;background-size: cover;");
-                console.log(document.getElementById("preview").style.backgroundImage);
-               /* document.getElementById("headerValue").value = hd;
-                document.getElementById("footerValue").value = ft;
-                document.getElementById("bgColor").value = bg;
-                document.getElementById("headerFontColor").value = hfc;
-                document.getElementById("footerFontColor").value = ffc;*/
-
+                //place info from URL into the HTML elements
                 document.getElementById("headerText").innerHTML = hd;
                 document.getElementById("footerText").innerHTML = ft;
-                //headerText.style.color = '#FFFFFF';
-                //footerText.style.color = '#FFFFFF';
+                $("#headerText").css("font-family", ff); // Change the font-family of the #paragraph
+                $("#footerText").css("font-family", ff);
+                document.getElementById("preview").setAttribute("style","background-image: url('" + img + "');width:600px;height:1800px;border:1px solid black;text-align: center; background-color: #000000;background-position: center;background-size: cover;");
+                console.log(document.getElementById("preview").style.backgroundImage);
 
-                //document.getElementById("curUrl").value = window.location.href;
-                //document.getElementById("curUrlTest").innerHTML = window.location.href;
-
+                //auto fit the header and footer texts
                 textFit(document.getElementById('headerText'), {multiLine: true, alignVert: true,maxFontSize: 120});
                 textFit(document.getElementById('footerText'), {multiLine: true, alignVert: true,maxFontSize: 120});
 
-                console.log(getUrlVars()["ff"]);
-                document.getElementById('fontDisplay').innerHTML = "Font Used: " + getUrlVars()["ff"];
-
-
                 return;
-
             });
     </script>
 
