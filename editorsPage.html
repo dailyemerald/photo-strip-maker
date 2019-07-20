@@ -295,6 +295,7 @@
                 } else {
                     var bg = '000000';
                 }
+                console.log(bg);
                 //HeaderText color
                 if (typeof getUrlVars()["hfc"] != 'undefined') {
                     var hfc = getUrlVars()["hfc"];
@@ -329,7 +330,7 @@
                 document.getElementById("footerText").innerHTML = ft;
                 $("#headerText").css("font-family", ff); // Change the font-family of the #paragraph
                 $("#footerText").css("font-family", ff);
-                document.getElementById("preview").setAttribute("style","background-image: url('" + img + "');width:600px;height:1800px;border:1px solid black;text-align: center; background-color: #000000;background-position: center;background-size: cover;");
+                document.getElementById("preview").setAttribute("style","background: url('" + img + "');background-repeat: no-repeat;width:600px;height:1800px;border:1px solid black;text-align: center;background-color: #" + bg + ";background-position: center;background-size: cover;");
                 console.log(document.getElementById("preview").style.backgroundImage);
 
                 //auto fit the header and footer texts
